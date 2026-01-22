@@ -1,0 +1,89 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: airag-decision
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: airag
+      config:
+        server-addr: localhost:8848
+        namespace: airag
+        file-extension: yml
+        group: DEFAULT_GROUP
+  profiles:
+    active: dev
+
+# 数据库配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/airag_decision
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+# JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 3
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+# Elasticsearch配置
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: changeme
+    connection-timeout: 10s
+    socket-timeout: 60s
+
+# MinIO配置
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: airag-decision
+
+# 自定义配置
+airag:
+  # Sentence-BERT模型配置
+  sentence-bert:
+    model-path: models/sentence-bert
+    vector-dimension: 768
+  # RAG知识库配置
+  rag:
+    chunk-size: 500
+    chunk-overlap: 50
+    max-results: 5
+    similarity-threshold: 0.7
+  # 决策服务配置
+  decision:
+    ai-model-type: rag  # 可选值: rag, rule_based, ml
+    max-response-time: 5000ms
+    decision-confidence-threshold: 0.7

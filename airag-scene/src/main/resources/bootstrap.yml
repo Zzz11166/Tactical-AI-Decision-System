@@ -1,0 +1,70 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: airag-scene
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: airag
+      config:
+        server-addr: localhost:8848
+        namespace: airag
+        file-extension: yml
+        group: DEFAULT_GROUP
+  profiles:
+    active: dev
+
+# 数据库配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/airag_scene
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+# JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 3
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+# Sentinel配置
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+      eager: true
+
+# 日志配置
+logging:
+  level:
+    com.spring.airag.scene: DEBUG
+    org.springframework.cloud.openfeign: DEBUG

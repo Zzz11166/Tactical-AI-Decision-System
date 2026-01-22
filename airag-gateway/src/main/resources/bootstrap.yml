@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: airag-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: airag
+      config:
+        server-addr: localhost:8848
+        namespace: airag
+        file-extension: yml
+        group: DEFAULT_GROUP
+  profiles:
+    active: dev
+
+# 日志配置
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    com.spring.airag.gateway: DEBUG

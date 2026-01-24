@@ -1,0 +1,44 @@
+spring:
+  config:
+    import:
+      - optional:nacos:airag-gateway-dev.yml
+  application:
+    name: airag-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
+        group: DEFAULT_GROUP  # 添加组配置
+        service: airag-gateway  # 明确指定服务名
+        enabled: true  # 启用服务发现
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
+        file-extension: yml
+        group: DEFAULT_GROUP
+        timeout: 3000
+        enabled: true
+        fail-fast: false
+  profiles:
+    active: dev
+
+server:
+  port: 8888
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    com.spring.airag.gateway: DEBUG
+    org.springframework.cloud: DEBUG

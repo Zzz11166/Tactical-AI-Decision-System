@@ -2,6 +2,7 @@ package com.spring.airag.decision.service;
 
 import com.spring.airag.common.entity.DecisionSuggestion;
 import com.spring.airag.common.entity.Model;
+
 import com.spring.airag.decision.feign.DataFeignClient;
 import com.spring.airag.decision.feign.SituationFeignClient;
 import com.spring.airag.decision.rag.RAGService;
@@ -346,8 +347,8 @@ public class AIDecisionService {
     /**
      * 分析威胁
      */
-    private List<com.spring.airag.common.entity.ThreatAssessment> analyzeThreats(Map<String, Model> models, String side) {
-        List<com.spring.airag.common.entity.ThreatAssessment> threats = new ArrayList<>();
+    private List<DecisionSuggestion.ThreatAssessment> analyzeThreats(Map<String, Model> models, String side) {
+        List<DecisionSuggestion.ThreatAssessment> threats = new ArrayList<>();
 
         // 分析敌方对我方单位的潜在威胁
         for (Model enemyModel : models.values()) {
@@ -365,9 +366,9 @@ public class AIDecisionService {
                 double threatLevel = calculateThreatLevel(enemyModel, ownModel, distance);
 
                 if (threatLevel > 0.3) { // 如果威胁超过阈值
-                    com.spring.airag.common.entity.ThreatAssessment threat = new com.spring.airag.common.entity.ThreatAssessment();
-                    threat.setSourceModelId(enemyModel.getId());
-                    threat.setTargetModelId(ownModel.getId());
+                    DecisionSuggestion.ThreatAssessment threat = new DecisionSuggestion.ThreatAssessment();
+                    threat.setThreatModelId(enemyModel.getId());
+                    threat.setAffectedModelId(ownModel.getId());
                     threat.setThreatLevel(threatLevel);
                     threat.setThreatType(determineThreatType(enemyModel, ownModel));
                     threat.setDescription(enemyModel.getType() + "单位" + enemyModel.getName() + 

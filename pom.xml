@@ -18,6 +18,7 @@
         <module>airag-data</module>
         <module>airag-scene</module>
         <module>airag-situation</module>
+        <module>airag-decision</module>
     </modules>
 
     <properties>
@@ -31,11 +32,11 @@
         <spring-boot.version>3.0.2</spring-boot.version>
 
         <!-- Spring Cloud -->
-        <spring-cloud.version>2022.0.0</spring-cloud.version>
+        <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
 
         <!-- 数据库 -->
-        <postgresql.version>42.5.1</postgresql.version>
+        <postgresql.version>42.7.3</postgresql.version>
 
         <!-- Redis -->
         <jedis.version>4.3.1</jedis.version>
@@ -44,7 +45,7 @@
         <elasticsearch.version>8.8.0</elasticsearch.version>
 
         <!-- MinIO -->
-        <minio.version>8.5.4</minio.version>
+        <minio.version>8.5.12</minio.version>
 
         <!-- XXL-JOB -->
         <xxl-job.version>2.4.0</xxl-job.version>

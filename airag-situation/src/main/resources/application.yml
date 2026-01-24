@@ -1,0 +1,68 @@
+spring:
+  config:
+    import:
+      - optional:nacos:airag-situation-dev.yml
+  application:
+    name: airag-situation
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: airag
+        group: DEFAULT_GROUP
+        service: airag-situation
+        enabled: true
+      config:
+        server-addr: localhost:8848
+        namespace: airag
+        file-extension: yml
+        group: DEFAULT_GROUP
+        timeout: 3000
+        enabled: true
+        fail-fast: false
+  profiles:
+    active: dev
+
+server:
+  port: 8884
+
+# Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 4
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+# WebSocket配置
+websocket:
+  path: /ws
+
+# RocketMQ配置
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: situation-producer-group
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    com.spring.airag.situation: DEBUG
+    org.springframework.cloud: DEBUG
+    com.alibaba.nacos: DEBUG

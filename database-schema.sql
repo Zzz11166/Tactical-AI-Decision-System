@@ -1,7 +1,17 @@
 -- AI辅助决策系统数据库建表脚本
 -- 数据库类型: PostgreSQL
 
--- 1. 用户表
+-- 为各个微服务创建数据库
+-- 注意：这些CREATE DATABASE语句需要以超级用户身份执行
+/*
+CREATE DATABASE airag_auth WITH OWNER = postgres ENCODING = 'UTF8';
+CREATE DATABASE airag_data WITH OWNER = postgres ENCODING = 'UTF8';
+CREATE DATABASE airag_scene WITH OWNER = postgres ENCODING = 'UTF8';
+CREATE DATABASE airag_decision WITH OWNER = postgres ENCODING = 'UTF8';
+*/
+
+-- 在airag_auth数据库中创建表
+-- 用户表
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -14,7 +24,26 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. 演练场景表
+-- 用户会话表
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 角色权限表
+CREATE TABLE IF NOT EXISTS roles (
+    id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 在airag_data数据库中创建表
+-- 演练场景表
 CREATE TABLE IF NOT EXISTS exercise_scenes (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -29,7 +58,7 @@ CREATE TABLE IF NOT EXISTS exercise_scenes (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. 模型/单位表
+-- 模型/单位表
 CREATE TABLE IF NOT EXISTS models (
     id VARCHAR(50) PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -53,7 +82,76 @@ CREATE TABLE IF NOT EXISTS models (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. 决策建议表
+-- 文件信息表
+CREATE TABLE IF NOT EXISTS files (
+    id SERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    original_name VARCHAR(255) NOT NULL,
+    file_size BIGINT,
+    content_type VARCHAR(100),
+    bucket_name VARCHAR(100),
+    object_name VARCHAR(255),
+    file_category VARCHAR(50), -- SCENARIO, TACTICAL_CASE, MAP, VIDEO等
+    uploaded_by INTEGER REFERENCES users(id),
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 战术案例表
+CREATE TABLE IF NOT EXISTS tactical_cases (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    scenario_type VARCHAR(50), -- 案例适用的场景类型
+    forces_composition JSONB, -- 双方兵力配置
+    tactics_used TEXT, -- 使用的战术
+    outcome TEXT, -- 案例结果
+    lessons_learned TEXT, -- 经验教训
+    difficulty_level INTEGER DEFAULT 1, -- 难度等级 1-5
+    tags TEXT[], -- 标签数组
+    created_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- RAG知识库表
+CREATE TABLE IF NOT EXISTS rag_knowledge (
+    id VARCHAR(50) PRIMARY KEY,
+    parent_id VARCHAR(50), -- 父文档ID，用于跟踪原始文档
+    title VARCHAR(500) NOT NULL,
+    content TEXT NOT NULL,
+    category VARCHAR(50), -- KNOWLEDGE, TACTICAL_CASE, RULE, PROCEDURE等
+    embedding_vector JSONB, -- 向量嵌入，使用JSONB存储，推荐生产环境使用pgvector扩展
+    metadata JSONB, -- 额外元数据
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 在airag_scene数据库中创建表
+-- 场景模板表
+CREATE TABLE IF NOT EXISTS scene_templates (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description TEXT,
+    template_config JSONB, -- 场景模板配置
+    created_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 地形数据表
+CREATE TABLE IF NOT EXISTS terrain_data (
+    id SERIAL PRIMARY KEY,
+    scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
+    name VARCHAR(255) NOT NULL,
+    terrain_type VARCHAR(50), -- MOUNTAIN, PLAIN, URBAN, WATER等
+    elevation_data JSONB, -- 高程数据
+    feature_data JSONB, -- 地形特征数据
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 在airag_decision数据库中创建表
+-- 决策建议表
 CREATE TABLE IF NOT EXISTS decision_suggestions (
     id SERIAL PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -67,7 +165,7 @@ CREATE TABLE IF NOT EXISTS decision_suggestions (
     generated_by VARCHAR(50) -- 生成方式：AI, MANUAL, HYBRID
 );
 
--- 5. 决策行动表
+-- 决策行动表
 CREATE TABLE IF NOT EXISTS decision_actions (
     id SERIAL PRIMARY KEY,
     suggestion_id INTEGER REFERENCES decision_suggestions(id),
@@ -86,7 +184,7 @@ CREATE TABLE IF NOT EXISTS decision_actions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. 威胁评估表
+-- 威胁评估表
 CREATE TABLE IF NOT EXISTS threat_assessments (
     id SERIAL PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -98,76 +196,7 @@ CREATE TABLE IF NOT EXISTS threat_assessments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. 指令表
-CREATE TABLE IF NOT EXISTS commands (
-    id SERIAL PRIMARY KEY,
-    scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
-    sender_id VARCHAR(50), -- 发送者ID（用户或AI）
-    receiver_id VARCHAR(50), -- 接收者ID（模型或用户组）
-    command_type VARCHAR(50) NOT NULL, -- MOVE, ATTACK, DEFEND, STOP等
-    parameters JSONB, -- 指令参数
-    status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, EXECUTED, FAILED, CANCELLED
-    executed_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 8. 状态变更日志表
-CREATE TABLE IF NOT EXISTS state_logs (
-    id SERIAL PRIMARY KEY,
-    scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
-    model_id VARCHAR(50) REFERENCES models(id),
-    event_type VARCHAR(50) NOT NULL, -- POSITION_UPDATE, STATUS_CHANGE, HEALTH_CHANGE, DAMAGE等
-    old_value JSONB,
-    new_value JSONB,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 9. 文件信息表
-CREATE TABLE IF NOT EXISTS files (
-    id SERIAL PRIMARY KEY,
-    filename VARCHAR(255) NOT NULL,
-    original_name VARCHAR(255) NOT NULL,
-    file_size BIGINT,
-    content_type VARCHAR(100),
-    bucket_name VARCHAR(100),
-    object_name VARCHAR(255),
-    file_category VARCHAR(50), -- SCENARIO, TACTICAL_CASE, MAP, VIDEO等
-    uploaded_by INTEGER REFERENCES users(id),
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 10. 战术案例表
-CREATE TABLE IF NOT EXISTS tactical_cases (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    scenario_type VARCHAR(50), -- 案例适用的场景类型
-    forces_composition JSONB, -- 双方兵力配置
-    tactics_used TEXT, -- 使用的战术
-    outcome TEXT, -- 案例结果
-    lessons_learned TEXT, -- 经验教训
-    difficulty_level INTEGER DEFAULT 1, -- 难度等级 1-5
-    tags TEXT[], -- 标签数组
-    created_by INTEGER REFERENCES users(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 11. RAG知识库表
-CREATE TABLE IF NOT EXISTS rag_knowledge (
-    id VARCHAR(50) PRIMARY KEY,
-    parent_id VARCHAR(50), -- 父文档ID，用于跟踪原始文档
-    title VARCHAR(500) NOT NULL,
-    content TEXT NOT NULL,
-    category VARCHAR(50), -- KNOWLEDGE, TACTICAL_CASE, RULE, PROCEDURE等
-    embedding_vector VECTOR(768), -- 向量嵌入，需要安装pgvector扩展
-    metadata JSONB, -- 额外元数据
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 12. 决策日志表
+-- 决策日志表
 CREATE TABLE IF NOT EXISTS decision_logs (
     id SERIAL PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -182,7 +211,32 @@ CREATE TABLE IF NOT EXISTS decision_logs (
     executed_at TIMESTAMP
 );
 
--- 13. 消息表（用于WebSocket通信）
+-- 指令表
+CREATE TABLE IF NOT EXISTS commands (
+    id SERIAL PRIMARY KEY,
+    scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
+    sender_id VARCHAR(50), -- 发送者ID（用户或AI）
+    receiver_id VARCHAR(50), -- 接收者ID（模型或用户组）
+    command_type VARCHAR(50) NOT NULL, -- MOVE, ATTACK, DEFEND, STOP等
+    parameters JSONB, -- 指令参数
+    status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, EXECUTED, FAILED, CANCELLED
+    executed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 状态变更日志表
+CREATE TABLE IF NOT EXISTS state_logs (
+    id SERIAL PRIMARY KEY,
+    scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
+    model_id VARCHAR(50) REFERENCES models(id),
+    event_type VARCHAR(50) NOT NULL, -- POSITION_UPDATE, STATUS_CHANGE, HEALTH_CHANGE, DAMAGE等
+    old_value JSONB,
+    new_value JSONB,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 消息表（用于WebSocket通信）
 CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -194,7 +248,7 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 14. 参与者表（场景参与者）
+-- 参与者表（场景参与者）
 CREATE TABLE IF NOT EXISTS participants (
     id SERIAL PRIMARY KEY,
     scene_id VARCHAR(50) REFERENCES exercise_scenes(id),
@@ -205,6 +259,7 @@ CREATE TABLE IF NOT EXISTS participants (
 );
 
 -- 创建索引以提高查询性能
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_models_scene_id ON models(scene_id);
 CREATE INDEX IF NOT EXISTS idx_models_side ON models(side);
 CREATE INDEX IF NOT EXISTS idx_models_type ON models(type);

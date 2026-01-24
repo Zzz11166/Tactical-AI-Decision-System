@@ -70,6 +70,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.spring.airag.situation.SituationApplication</mainClass>
+                    <layout>ZIP</layout>
                 </configuration>
             </plugin>
         </plugins>

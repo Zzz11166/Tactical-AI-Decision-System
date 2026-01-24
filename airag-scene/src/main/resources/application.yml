@@ -1,0 +1,58 @@
+spring:
+  config:
+    import:
+      - optional:nacos:airag-scene-dev.yml
+  application:
+    name: airag-scene
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: airag
+      config:
+        server-addr: localhost:8848
+        namespace: airag
+        file-extension: yml
+        group: DEFAULT_GROUP
+  profiles:
+    active: dev
+
+server:
+  port: 8883
+
+# Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 3
+      timeout: 10s
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+# Sentinel配置
+sentinel:
+  transport:
+    dashboard: localhost:8080
+  eager: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    com.spring.airag.scene: DEBUG
+    org.springframework.cloud: DEBUG
+    com.alibaba.nacos: DEBUG

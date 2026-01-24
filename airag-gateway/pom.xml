@@ -17,13 +17,6 @@
     <description>网关服务</description>
 
     <dependencies>
-        <!-- 公共模块 -->
-        <dependency>
-            <groupId>com.spring</groupId>
-            <artifactId>airag-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Spring Cloud Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -62,6 +55,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>com.spring.airag.gateway.GatewayApplication</mainClass>
+                    <layout>ZIP</layout>
                 </configuration>
             </plugin>
         </plugins>

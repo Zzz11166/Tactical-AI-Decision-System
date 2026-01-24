@@ -1,7 +1,7 @@
-server:
-  port: 8085
-
 spring:
+  config:
+    import:
+      - optional:nacos:airag-decision-dev.yml
   application:
     name: airag-decision
   cloud:
@@ -9,36 +9,22 @@ spring:
       discovery:
         server-addr: localhost:8848
         namespace: airag
+        group: DEFAULT_GROUP
+        service: airag-decision
+        enabled: true
       config:
         server-addr: localhost:8848
         namespace: airag
         file-extension: yml
         group: DEFAULT_GROUP
+        timeout: 3000
+        enabled: true
+        fail-fast: false
   profiles:
     active: dev
 
-# 数据库配置
-  datasource:
-    url: jdbc:postgresql://localhost:5432/airag_decision
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-
-# JPA配置
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+server:
+  port: 8885
 
 # Redis配置
   data:
@@ -46,7 +32,7 @@ spring:
       host: localhost
       port: 6379
       password:
-      database: 3
+      database: 5
       timeout: 10s
       lettuce:
         pool:
@@ -82,8 +68,26 @@ airag:
     chunk-overlap: 50
     max-results: 5
     similarity-threshold: 0.7
-  # 决策服务配置
+  # AI决策配置
   decision:
-    ai-model-type: rag  # 可选值: rag, rule_based, ml
-    max-response-time: 5000ms
-    decision-confidence-threshold: 0.7
+    ai-model-type: llm-gpt
+    decision-confidence-threshold: 0.6
+    max-response-time: 30s
+    model-path: models/decision-model
+    temperature: 0.7
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# 日志配置
+logging:
+  level:
+    com.spring.airag.decision: DEBUG
+    org.springframework.cloud: DEBUG
+    com.alibaba.nacos: DEBUG

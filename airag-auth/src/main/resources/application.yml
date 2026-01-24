@@ -33,15 +33,13 @@ server:
       idle-timeout: 600000
       max-lifetime: 1800000
 
-# JPA配置
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.spring.airag.auth.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # Redis配置
   data:
@@ -63,3 +61,13 @@ airag:
   jwt:
     secret: airag-auth-jwt-secret-key-change-in-production
     expiration: 86400000  # 24小时
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

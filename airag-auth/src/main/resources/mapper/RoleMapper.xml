@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.airag.auth.mapper.RoleMapper">
+    <resultMap id="RoleResultMap" type="com.spring.airag.auth.entity.Role">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="selectById" parameterType="int" resultMap="RoleResultMap">
+        SELECT * FROM roles WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="RoleResultMap">
+        SELECT * FROM roles ORDER BY id
+    </select>
+
+    <select id="selectByRoleName" parameterType="string" resultMap="RoleResultMap">
+        SELECT * FROM roles WHERE role_name = #{roleName}
+    </select>
+
+    <insert id="insert" parameterType="com.spring.airag.auth.entity.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO roles (role_name, description, created_at)
+        VALUES (#{roleName}, #{description}, #{createdAt})
+    </insert>
+
+    <update id="update" parameterType="com.spring.airag.auth.entity.Role">
+        UPDATE roles
+        SET role_name = #{roleName},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM roles WHERE id = #{id}
+    </delete>
+</mapper>

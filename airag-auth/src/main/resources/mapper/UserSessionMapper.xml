@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.airag.auth.mapper.UserSessionMapper">
+    <resultMap id="UserSessionResultMap" type="com.spring.airag.auth.entity.UserSession">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="sessionToken" column="session_token"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectById" parameterType="int" resultMap="UserSessionResultMap">
+        SELECT * FROM user_sessions WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="UserSessionResultMap">
+        SELECT * FROM user_sessions ORDER BY id
+    </select>
+
+    <select id="selectBySessionToken" parameterType="string" resultMap="UserSessionResultMap">
+        SELECT * FROM user_sessions WHERE session_token = #{sessionToken}
+    </select>
+
+    <select id="selectByUserId" parameterType="int" resultMap="UserSessionResultMap">
+        SELECT * FROM user_sessions WHERE user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.spring.airag.auth.entity.UserSession" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_sessions (user_id, session_token, expires_at, created_at, updated_at)
+        VALUES (#{userId}, #{sessionToken}, #{expiresAt}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.spring.airag.auth.entity.UserSession">
+        UPDATE user_sessions
+        SET user_id = #{userId},
+            session_token = #{sessionToken},
+            expires_at = #{expiresAt},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM user_sessions WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteBySessionToken" parameterType="string">
+        DELETE FROM user_sessions WHERE session_token = #{sessionToken}
+    </delete>
+
+    <delete id="deleteByUserId" parameterType="int">
+        DELETE FROM user_sessions WHERE user_id = #{userId}
+    </delete>
+</mapper>

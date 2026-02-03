@@ -1,0 +1,864 @@
+{
+  "info": {
+    "name": "AIRAG认证服务API",
+    "_postman_id": "airag-auth-api",
+    "description": "AIRAG系统认证服务API接口集合，包括用户认证、角色管理、会话管理等功能",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collections.json"
+  },
+  "item": [
+    {
+      "name": "用户认证接口",
+      "item": [
+        {
+          "name": "用户登录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "用户登录接口，返回JWT令牌"
+          },
+          "response": [
+            {
+              "name": "成功登录响应",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6\",\n    \"refreshToken\": null,\n    \"tokenType\": \"Bearer\",\n    \"expiresIn\": 86400000,\n    \"username\": \"admin\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "用户注册",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"testpass123\",\n  \"email\": \"test@example.com\",\n  \"phone\": \"13800138000\",\n  \"role\": \"USER\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/register",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "用户注册接口，创建新用户"
+          },
+          "response": [
+            {
+              "name": "成功注册响应",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"testpass123\",\n  \"email\": \"test@example.com\",\n  \"phone\": \"138000138000\",\n  \"role\": \"USER\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/register",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "register"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 2,\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"phone\": \"13800138000\",\n    \"role\": \"USER\",\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2026-02-03T10:00:00\",\n    \"updatedAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "检查用户认证状态",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/check",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "check"]
+            },
+            "description": "检查当前用户认证状态"
+          },
+          "response": [
+            {
+              "name": "认证状态响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/check",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "check"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": \"用户已认证\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "获取所有用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/users",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "users"]
+            },
+            "description": "获取所有用户信息"
+          },
+          "response": [
+            {
+              "name": "用户列表响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/users",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "users"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"username\": \"admin\",\n      \"email\": \"admin@example.com\",\n      \"phone\": null,\n      \"role\": \"ADMIN\",\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"2026-02-03T10:00:00\",\n      \"updatedAt\": \"2026-02-03T10:00:00\"\n    },\n    {\n      \"id\": 2,\n      \"username\": \"testuser\",\n      \"email\": \"test@example.com\",\n      \"phone\": \"13800138000\",\n      \"role\": \"USER\",\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"2026-02-03T10:00:00\",\n      \"updatedAt\": \"2026-02-03T10:00:00\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据ID获取用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/user/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "user", "1"]
+            },
+            "description": "根据用户ID获取用户信息"
+          },
+          "response": [
+            {
+              "name": "用户信息响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/user/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "user", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"username\": \"admin\",\n    \"email\": \"admin@example.com\",\n    \"phone\": null,\n    \"role\": \"ADMIN\",\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2026-02-03T10:00:00\",\n    \"updatedAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据用户名获取用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/user/username/admin",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "user", "username", "admin"]
+            },
+            "description": "根据用户名获取用户信息"
+          },
+          "response": [
+            {
+              "name": "用户信息响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/user/username/admin",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "auth", "user", "username", "admin"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"username\": \"admin\",\n    \"email\": \"admin@example.com\",\n    \"phone\": null,\n    \"role\": \"ADMIN\",\n    \"status\": \"ACTIVE\",\n    \"createdAt\": \"2026-02-03T10:00:00\",\n    \"updatedAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "角色管理接口",
+      "item": [
+        {
+          "name": "获取所有角色",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/role/list",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "role", "list"]
+            },
+            "description": "获取所有角色信息"
+          },
+          "response": [
+            {
+              "name": "角色列表响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/role/list",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "role", "list"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"roleName\": \"ADMIN\",\n      \"description\": \"系统管理员角色\",\n      \"createdAt\": \"2026-02-03T10:00:00\"\n    },\n    {\n      \"id\": 2,\n      \"roleName\": \"USER\",\n      \"description\": \"普通用户角色\",\n      \"createdAt\": \"2026-02-03T10:00:00\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据ID获取角色",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/role/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "role", "1"]
+            },
+            "description": "根据角色ID获取角色信息"
+          },
+          "response": [
+            {
+              "name": "角色信息响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/role/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "role", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"roleName\": \"ADMIN\",\n    \"description\": \"系统管理员角色\",\n    \"createdAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "创建角色",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "Content type header"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}",
+                "description": "Authentication token"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"OPERATOR\",\n  \"description\": \"操作员角色\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/role",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "role"]
+            },
+            "description": "创建新角色"
+          },
+          "response": [
+            {
+              "name": "创建角色响应",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roleName\": \"OPERATOR\",\n  \"description\": \"操作员角色\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/role",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "role"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 3,\n    \"roleName\": \"OPERATOR\",\n    \"description\": \"操作员角色\",\n    \"createdAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "更新角色",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "Content type header"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}",
+                "description": "Authentication token"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"OPERATOR_UPDATED\",\n  \"description\": \"更新后的操作员角色\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/role/3",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "role", "3"]
+            },
+            "description": "根据ID更新角色信息"
+          },
+          "response": [
+            {
+              "name": "更新角色响应",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roleName\": \"OPERATOR_UPDATED\",\n  \"description\": \"更新后的操作员角色\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/role/3",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "role", "3"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 3,\n    \"roleName\": \"OPERATOR_UPDATED\",\n    \"description\": \"更新后的操作员角色\",\n    \"createdAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "删除角色",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/role/3",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "role", "3"]
+            },
+            "description": "根据ID删除角色"
+          },
+          "response": [
+            {
+              "name": "删除成功响应",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/role/3",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "role", "3"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "会话管理接口",
+      "item": [
+        {
+          "name": "获取所有会话",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/list",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "list"]
+            },
+            "description": "获取所有会话信息"
+          },
+          "response": [
+            {
+              "name": "会话列表响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/list",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "list"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"userId\": 1,\n      \"sessionToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6\",\n      \"expiresAt\": \"2026-02-04T10:00:00\",\n      \"createdAt\": \"2026-02-03T10:00:00\",\n      \"updatedAt\": \"2026-02-03T10:00:00\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据ID获取会话",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "1"]
+            },
+            "description": "根据会话ID获取会话信息"
+          },
+          "response": [
+            {
+              "name": "会话信息响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"userId\": 1,\n    \"sessionToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6\",\n    \"expiresAt\": \"2026-02-04T10:00:00\",\n    \"createdAt\": \"2026-02-03T10:00:00\",\n    \"updatedAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据用户ID获取会话",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/user/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "user", "1"]
+            },
+            "description": "根据用户ID获取会话信息"
+          },
+          "response": [
+            {
+              "name": "用户会话列表响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/user/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "user", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"userId\": 1,\n      \"sessionToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6\",\n      \"expiresAt\": \"2026-02-04T10:00:00\",\n      \"createdAt\": \"2026-02-03T10:00:00\",\n      \"updatedAt\": \"2026-02-03T10:00:00\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "根据会话令牌获取会话",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/token/eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6"]
+            },
+            "description": "根据会话令牌获取会话信息"
+          },
+          "response": [
+            {
+              "name": "会话信息响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/token/eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": {\n    \"id\": 1,\n    \"userId\": 1,\n    \"sessionToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWRfYXQiOjE2MzMxNjUyNzAsImV4cCI6MTYzMzE2ODg3MH0.3aY4qK5Z0oQ7kF7x1p2q3r4s5t6u7v8w9x0y1z2A3b4c5d6e7f8g9h0i1j2k3l4m5n6\",\n    \"expiresAt\": \"2026-02-04T10:00:00\",\n    \"createdAt\": \"2026-02-03T10:00:00\",\n    \"updatedAt\": \"2026-02-03T10:00:00\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "删除会话",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "1"]
+            },
+            "description": "根据ID删除会话"
+          },
+          "response": [
+            {
+              "name": "删除成功响应",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "删除指定用户的所有会话",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/session/user/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "session", "user", "1"]
+            },
+            "description": "删除指定用户的所有会话"
+          },
+          "response": [
+            {
+              "name": "删除成功响应",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/session/user/1",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "session", "user", "1"]
+                }
+              },
+              "status": "OK",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"message\": \"success\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8881",
+      "description": "API服务的基础URL"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "description": "认证令牌，在登录后获取并设置"
+    }
+  ]
+}

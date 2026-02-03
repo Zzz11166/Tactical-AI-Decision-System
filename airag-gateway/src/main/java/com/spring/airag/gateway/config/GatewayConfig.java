@@ -22,12 +22,20 @@ public class GatewayConfig {
         return builder.routes()
                 // 认证服务路由
                 .route("auth-service", r -> r.path("/api/auth/**")
-                        .filters(f -> f.stripPrefix(2))
+                        .filters(f -> f.stripPrefix(0))
                         .uri("lb://airag-auth"))
 
-                // 数据管理服务路由
+                // 数据管理服务路由（无限制）
                 .route("data-service", r -> r.path("/api/data/**")
                         .filters(f -> f.stripPrefix(2))
+                        .uri("lb://airag-data"))
+
+                // 数据服务路由（带限流）
+                .route("data-service-with-rate-limit", r -> r.path("/api/data/**")
+                        .filters(f -> f.stripPrefix(2)
+                                .requestRateLimiter(config -> config
+                                        .setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(userKeyResolver())))
                         .uri("lb://airag-data"))
 
                 // 场景构设服务路由
@@ -49,33 +57,18 @@ public class GatewayConfig {
                 .route("websocket-route", r -> r.path("/ws/**")
                         .uri("lb://airag-situation"))
 
-                // 数据服务路由（带限流）
-                .route("data-service", r -> r.path("/api/data/**")
-                        .filters(f -> f.stripPrefix(2)
-                                .requestRateLimiter(config -> config
-                                        .setRateLimiter(redisRateLimiter())
-                                        .setKeyResolver(userKeyResolver())))
-                        .uri("lb://airag-data"))
-
                 .build();
     }
 
     /**
-     * 安全配置
+     * 安全配置 - 只启用基本安全设置，认证授权由自定义过滤器处理
      */
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 允许跨域预检请求
-                        .pathMatchers("/api/auth/login", "/api/auth/register").permitAll() // 登录注册不需要认证
-                        .pathMatchers("/api/auth/**").authenticated() // 认证相关接口需要认证
-                        .pathMatchers("/api/data/**").authenticated() // 数据接口需要认证
-                        .pathMatchers("/api/scene/**").authenticated() // 场景接口需要认证
-                        .pathMatchers("/api/situation/**").authenticated() // 态势接口需要认证
-                        .pathMatchers("/api/decision/**").authenticated() // 决策接口需要认证
-                        .pathMatchers("/ws/**").authenticated() // WebSocket需要认证
-                        .anyExchange().authenticated()
+                        .anyExchange().permitAll() // 其他所有请求都允许通过，由自定义过滤器处理
                 )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable()); // 可以配置具体的CORS规则替代这个

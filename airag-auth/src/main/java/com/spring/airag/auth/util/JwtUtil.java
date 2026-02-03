@@ -3,9 +3,13 @@ package com.spring.airag.auth.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +25,34 @@ public class JwtUtil {
 
     @Value("${airag.jwt.expiration}")
     private Long expiration;
+
+    /**
+     * 获取签名密钥
+     * @return 密钥对象
+     */
+    private Key getSigningKey() {
+        // 将配置的密钥字符串进行处理，确保符合HS512算法的安全要求
+        if (secret == null || secret.isEmpty()) {
+            // 如果没有配置密钥，使用一个安全的默认密钥
+            return Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        } else {
+            // 确保密钥长度符合HS512算法要求（至少512位/64字节）
+            try {
+                byte[] keyBytes = secret.getBytes();
+                if (keyBytes.length < 64) {
+                    // 如果密钥长度不足，使用SHA-512哈希处理以确保足够的长度和安全性
+                    MessageDigest sha512Digest = MessageDigest.getInstance("SHA-512");
+                    byte[] hashedKey = sha512Digest.digest(secret.getBytes());
+                    return Keys.hmacShaKeyFor(hashedKey);
+                } else {
+                    return Keys.hmacShaKeyFor(keyBytes);
+                }
+            } catch (NoSuchAlgorithmException e) {
+                // 如果SHA-512算法不可用，使用默认安全密钥
+                return Keys.secretKeyFor(SignatureAlgorithm.HS512);
+            }
+        }
+    }
 
     /**
      * 生成JWT令牌
@@ -44,7 +76,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -121,9 +153,14 @@ public class JwtUtil {
      * @return 所有声明
      */
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("JWT验证失败: " + e.getMessage(), e);
+        }
     }
 }

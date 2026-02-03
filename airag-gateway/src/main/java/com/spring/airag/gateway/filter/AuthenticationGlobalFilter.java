@@ -47,6 +47,19 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
     }
 
     private boolean isProtectedPath(String path) {
+        // 排除认证服务中的公开端点
+        if (path.startsWith("/api/auth/")) {
+            // 这些路径不需要认证
+            if (path.equals("/api/auth/login") || 
+                path.equals("/api/auth/register") || 
+                path.equals("/api/auth/refresh") || 
+                path.equals("/api/auth/logout")) {
+                return false;
+            }
+            // 其他 /api/auth/ 路径需要认证
+            return true;
+        }
+        
         return path.startsWith("/api/data/") || 
                path.startsWith("/api/scene/") || 
                path.startsWith("/api/situation/") || 

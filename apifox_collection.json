@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "AI辅助决策系统API测试",
+    "_postman_id": "airag-system-api-collection",
+    "description": "AI辅助决策系统（AIRAG）的API接口集合，包含网关、数据管理等服务",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collections.json"
+  },
+  "item": [
+    {
+      "name": "Gateway网关服务",
+      "item": [
+        {
+          "name": "网关健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/actuator/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "检查网关服务是否正常运行"
+          },
+          "response": []
+        },
+        {
+          "name": "网关路由信息",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/actuator/gateway/routes",
+              "host": ["{{BASE_URL}}"],
+              "path": ["actuator", "gateway", "routes"]
+            },
+            "description": "获取网关当前的路由配置信息"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Airag-Data数据管理服务",
+      "item": [
+        {
+          "name": "上传文件",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/upload",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "upload"]
+            },
+            "description": "上传文件到MinIO对象存储"
+          },
+          "response": []
+        },
+        {
+          "name": "下载文件",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/download/{{FILENAME}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "download", "{{FILENAME}}"]
+            },
+            "description": "从MinIO下载文件"
+          },
+          "response": []
+        },
+        {
+          "name": "删除文件",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/delete/{{FILENAME}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "delete", "{{FILENAME}}"]
+            },
+            "description": "从MinIO删除文件"
+          },
+          "response": []
+        },
+        {
+          "name": "数据服务健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "health"]
+            },
+            "description": "检查数据服务是否正常运行"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "认证与安全",
+      "item": [
+        {
+          "name": "访问受保护资源-无认证",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "health"]
+            },
+            "description": "测试无认证访问受保护资源（应返回401）"
+          },
+          "response": []
+        },
+        {
+          "name": "访问受保护资源-有效认证",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/data/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "data", "health"]
+            },
+            "description": "使用有效JWT令牌访问受保护资源"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "BASE_URL",
+      "key": "BASE_URL",
+      "value": "http://localhost:8888",
+      "type": "string"
+    },
+    {
+      "id": "JWT_TOKEN",
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "ADMIN_JWT_TOKEN",
+      "key": "ADMIN_JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "id": "FILENAME",
+      "key": "FILENAME",
+      "value": "test.txt",
+      "type": "string"
+    }
+  ]
+}

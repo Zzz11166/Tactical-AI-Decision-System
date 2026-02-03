@@ -34,16 +34,27 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+/**
+ * 登录方法实现
+ * @param loginRequest 包含用户名和密码的登录请求对象
+ * @return AuthResponse 包含JWT令牌和用户信息的响应对象
+ */
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
-        // 使用Spring Security进行身份验证
+        // 使用Spring Security进行身份验证，创建UsernamePasswordAuthenticationToken对象
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
+    // 将认证信息存储到SecurityContext中，以便在后续请求中获取当前用户信息
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 获取用户信息
-        User user = (User) authentication.getPrincipal();
+        // 获取用户信息 - 从数据库查询完整用户信息而不是使用Principal
+        String username = loginRequest.getUsername();
+        User user = userMapper.selectByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
 
         // 生成JWT令牌
         String roles = user.getRole();

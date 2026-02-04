@@ -1,32 +1,26 @@
 spring:
-  config:
-    import:
-      - optional:nacos:airag-data-dev.yml
   application:
-    name: airag-data
+    name: airag-gateway
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
         namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
         group: DEFAULT_GROUP
-        service: airag-data
+        service: airag-gateway
         enabled: true
       config:
         server-addr: localhost:8848
         namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
         file-extension: yml
         group: DEFAULT_GROUP
+        timeout: 3000
         enabled: true
+        fail-fast: false
   profiles:
     active: dev
 
-server:
-  port: 8082
-
 logging:
   level:
-    com.alibaba.cloud.nacos: INFO
-    com.alibaba.nacos: INFO
-    org.springframework.cloud: INFO
-    com.spring.airag.data: DEBUG
+    com.alibaba.cloud.nacos: DEBUG
+    com.alibaba.nacos: TRACE

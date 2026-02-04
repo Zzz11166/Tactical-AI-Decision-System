@@ -25,13 +25,15 @@ public class GatewayConfig {
                         .filters(f -> f.stripPrefix(0))
                         .uri("lb://airag-auth"))
 
-                // 数据管理服务路由（无限制）
-                .route("data-service", r -> r.path("/api/data/**")
-                        .filters(f -> f.stripPrefix(2))
+                // 数据管理服务路由（只读操作-无限制）
+                .route("data-service-read", r -> r.path("/api/data/**")
+                        .and().method(HttpMethod.GET)
+                        .filters(f -> f.stripPrefix(0))
                         .uri("lb://airag-data"))
 
-                // 数据服务路由（带限流）
-                .route("data-service-with-rate-limit", r -> r.path("/api/data/**")
+                // 数据服务路由（写操作-带限流）
+                .route("data-service-write", r -> r.path("/api/data/**")
+                        .and().method(HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)
                         .filters(f -> f.stripPrefix(2)
                                 .requestRateLimiter(config -> config
                                         .setRateLimiter(redisRateLimiter())

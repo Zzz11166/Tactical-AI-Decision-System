@@ -9,11 +9,15 @@ spring:
       discovery:
         server-addr: localhost:8848
         namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
+        group: DEFAULT_GROUP
+        service: airag-auth
+        enabled: true
       config:
         server-addr: localhost:8848
         namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
         file-extension: yml
         group: DEFAULT_GROUP
+        enabled: true
   profiles:
     active: dev
 

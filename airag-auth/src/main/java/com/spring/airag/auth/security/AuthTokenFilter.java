@@ -46,7 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             // 从请求中解析JWT令牌
             String jwt = parseJwt(request);
             // 验证JWT令牌是否有效且不为空
-            if (jwt != null && jwtUtil.validateToken(jwt, jwtUtil.getUsernameFromToken(jwt))) {
+            if (jwt != null && jwtUtil.validateToken(jwt)) {
                 // 从JWT令牌中获取用户名
                 String username = jwtUtil.getUsernameFromToken(jwt);
 

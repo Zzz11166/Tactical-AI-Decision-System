@@ -89,7 +89,22 @@ public class JwtUtil {
      */
     public Boolean validateToken(String token, String username) {
         String tokenUsername = getUsernameFromToken(token);
-        return tokenUsername.equals(username) && !isTokenExpired(token);
+        return tokenUsername != null && tokenUsername.equals(username) && !isTokenExpired(token);
+    }
+
+    /**
+     * 验证JWT令牌（仅验证令牌有效性）
+     *
+     * @param token 令牌
+     * @return 是否有效
+     */
+    public Boolean validateToken(String token) {
+        try {
+            String username = getUsernameFromToken(token);
+            return username != null && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -99,7 +114,11 @@ public class JwtUtil {
      * @return 用户名
      */
     public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        try {
+            return getClaimFromToken(token, Claims::getSubject);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.airag.data.mapper.ExerciseSceneMapper">
+
+    <resultMap id="ExerciseSceneResultMap" type="com.spring.airag.data.entity.ExerciseSceneEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="description" property="description"/>
+        <result column="map_id" property="mapId"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="config" property="config"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.spring.airag.data.entity.ExerciseSceneEntity">
+        INSERT INTO exercise_scenes (
+            id, name, type, description, map_id, creator_id, start_time, end_time,
+            status, config, created_at, updated_at
+        ) VALUES (
+            #{id}, #{name}, #{type}, #{description}, #{mapId}, #{creatorId}, 
+            #{startTime}, #{endTime}, #{status}, #{config}, NOW(), NOW()
+        )
+    </insert>
+
+    <select id="selectById" parameterType="string" resultMap="ExerciseSceneResultMap">
+        SELECT * FROM exercise_scenes WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="ExerciseSceneResultMap">
+        SELECT * FROM exercise_scenes ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByStatus" parameterType="string" resultMap="ExerciseSceneResultMap">
+        SELECT * FROM exercise_scenes WHERE status = #{status} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByType" parameterType="string" resultMap="ExerciseSceneResultMap">
+        SELECT * FROM exercise_scenes WHERE type = #{type} ORDER BY created_at DESC
+    </select>
+
+    <update id="update" parameterType="com.spring.airag.data.entity.ExerciseSceneEntity">
+        UPDATE exercise_scenes SET
+            name = #{name},
+            type = #{type},
+            description = #{description},
+            map_id = #{mapId},
+            creator_id = #{creatorId},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            status = #{status},
+            config = #{config},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM exercise_scenes WHERE id = #{id}
+    </delete>
+
+</mapper>

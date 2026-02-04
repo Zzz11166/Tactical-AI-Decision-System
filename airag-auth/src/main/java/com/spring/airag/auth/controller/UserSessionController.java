@@ -12,7 +12,7 @@ import java.util.List;
  * 用户会话控制器
  */
 @RestController
-@RequestMapping("/api/session")
+@RequestMapping("/api/auth/session")
 public class UserSessionController {
 
     @Autowired

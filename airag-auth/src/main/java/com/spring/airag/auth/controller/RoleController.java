@@ -12,7 +12,7 @@ import java.util.List;
  * 角色控制器
  */
 @RestController
-@RequestMapping("/api/role")
+@RequestMapping("/api/auth/role")
 public class RoleController {
 
     @Autowired

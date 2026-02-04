@@ -1,16 +1,13 @@
 spring:
-  config:
-    import:
-      - optional:nacos:airag-data-dev.yml
   application:
-    name: airag-data
+    name: airag-scene
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
         namespace: c18d0e3d-7b32-497b-8eab-cadf30a37454
         group: DEFAULT_GROUP
-        service: airag-data
+        service: airag-scene
         enabled: true
       config:
         server-addr: localhost:8848
@@ -21,12 +18,7 @@ spring:
   profiles:
     active: dev
 
-server:
-  port: 8082
-
 logging:
   level:
-    com.alibaba.cloud.nacos: INFO
-    com.alibaba.nacos: INFO
-    org.springframework.cloud: INFO
-    com.spring.airag.data: DEBUG
+    com.alibaba.cloud.nacos: DEBUG
+    com.alibaba.nacos: TRACE

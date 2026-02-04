@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.airag.data.mapper.ModelMapper">
+
+    <resultMap id="ModelResultMap" type="com.spring.airag.data.entity.ModelEntity">
+        <id column="id" property="id"/>
+        <result column="scene_id" property="sceneId"/>
+        <result column="name" property="name"/>
+        <result column="side" property="side"/>
+        <result column="type" property="type"/>
+        <result column="position_x" property="positionX"/>
+        <result column="position_y" property="positionY"/>
+        <result column="position_z" property="positionZ"/>
+        <result column="status" property="status"/>
+        <result column="detection_status" property="detectionStatus"/>
+        <result column="detected_by" property="detectedBy"/>
+        <result column="detection_time" property="detectionTime"/>
+        <result column="health" property="health"/>
+        <result column="attack_power" property="attackPower"/>
+        <result column="defense_power" property="defensePower"/>
+        <result column="attack_range" property="attackRange"/>
+        <result column="detection_range" property="detectionRange"/>
+        <result column="move_speed" property="moveSpeed"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.spring.airag.data.entity.ModelEntity">
+        INSERT INTO models (
+            id, scene_id, name, side, type, position_x, position_y, position_z,
+            status, detection_status, detected_by, detection_time, health,
+            attack_power, defense_power, attack_range, detection_range, move_speed,
+            created_at, updated_at
+        ) VALUES (
+            #{id}, #{sceneId}, #{name}, #{side}, #{type}, #{positionX}, #{positionY}, #{positionZ},
+            #{status}, #{detectionStatus}, #{detectedBy}, #{detectionTime}, #{health},
+            #{attackPower}, #{defensePower}, #{attackRange}, #{detectionRange}, #{moveSpeed},
+            NOW(), NOW()
+        )
+    </insert>
+
+    <select id="selectById" parameterType="string" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="ModelResultMap">
+        SELECT * FROM models ORDER BY created_at DESC
+    </select>
+
+    <select id="selectBySceneId" parameterType="string" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE scene_id = #{sceneId} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectBySide" parameterType="string" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE side = #{side} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByType" parameterType="string" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE type = #{type} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByStatus" parameterType="string" resultMap="ModelResultMap">
+        SELECT * FROM models WHERE status = #{status} ORDER BY created_at DESC
+    </select>
+
+    <update id="update" parameterType="com.spring.airag.data.entity.ModelEntity">
+        UPDATE models SET
+            scene_id = #{sceneId},
+            name = #{name},
+            side = #{side},
+            type = #{type},
+            position_x = #{positionX},
+            position_y = #{positionY},
+            position_z = #{positionZ},
+            status = #{status},
+            detection_status = #{detectionStatus},
+            detected_by = #{detectedBy},
+            detection_time = #{detectionTime},
+            health = #{health},
+            attack_power = #{attackPower},
+            defense_power = #{defensePower},
+            attack_range = #{attackRange},
+            detection_range = #{detectionRange},
+            move_speed = #{moveSpeed},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM models WHERE id = #{id}
+    </delete>
+
+</mapper>

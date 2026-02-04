@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.airag.data.mapper.TacticalCaseMapper">
+
+    <resultMap id="TacticalCaseResultMap" type="com.spring.airag.data.entity.TacticalCaseEntity">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="scenario_type" property="scenarioType"/>
+        <result column="forces_composition" property="forcesComposition"/>
+        <result column="tactics_used" property="tacticsUsed"/>
+        <result column="outcome" property="outcome"/>
+        <result column="lessons_learned" property="lessonsLearned"/>
+        <result column="difficulty_level" property="difficultyLevel"/>
+        <result column="tags" property="tags" typeHandler="org.apache.ibatis.type.ArrayTypeHandler"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.spring.airag.data.entity.TacticalCaseEntity">
+        INSERT INTO tactical_cases (
+            id, title, description, scenario_type, forces_composition, tactics_used,
+            outcome, lessons_learned, difficulty_level, tags, created_by, created_at, updated_at
+        ) VALUES (
+            #{id}, #{title}, #{description}, #{scenarioType}, #{forcesComposition}, #{tacticsUsed},
+            #{outcome}, #{lessonsLearned}, #{difficultyLevel}, #{tags, typeHandler=org.apache.ibatis.type.ArrayTypeHandler}, 
+            #{createdBy}, NOW(), NOW()
+        )
+    </insert>
+
+    <select id="selectById" parameterType="string" resultMap="TacticalCaseResultMap">
+        SELECT * FROM tactical_cases WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="TacticalCaseResultMap">
+        SELECT * FROM tactical_cases ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByScenarioType" parameterType="string" resultMap="TacticalCaseResultMap">
+        SELECT * FROM tactical_cases WHERE scenario_type = #{scenarioType} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByDifficultyLevel" parameterType="int" resultMap="TacticalCaseResultMap">
+        SELECT * FROM tactical_cases WHERE difficulty_level = #{difficultyLevel} ORDER BY created_at DESC
+    </select>
+
+    <update id="update" parameterType="com.spring.airag.data.entity.TacticalCaseEntity">
+        UPDATE tactical_cases SET
+            title = #{title},
+            description = #{description},
+            scenario_type = #{scenarioType},
+            forces_composition = #{forcesComposition},
+            tactics_used = #{tacticsUsed},
+            outcome = #{outcome},
+            lessons_learned = #{lessonsLearned},
+            difficulty_level = #{difficultyLevel},
+            tags = #{tags, typeHandler=org.apache.ibatis.type.ArrayTypeHandler},
+            created_by = #{createdBy},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM tactical_cases WHERE id = #{id}
+    </delete>
+
+</mapper>

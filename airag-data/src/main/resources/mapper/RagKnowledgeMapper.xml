@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.airag.data.mapper.RagKnowledgeMapper">
+
+    <resultMap id="RagKnowledgeResultMap" type="com.spring.airag.data.entity.RagKnowledgeEntity">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="category" property="category"/>
+        <result column="embedding_vector" property="embeddingVector"/>
+        <result column="metadata" property="metadata"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.spring.airag.data.entity.RagKnowledgeEntity">
+        INSERT INTO rag_knowledge (
+            id, parent_id, title, content, category, embedding_vector, metadata, created_at, updated_at
+        ) VALUES (
+            #{id}, #{parentId}, #{title}, #{content}, #{category}, #{embeddingVector}, #{metadata}, NOW(), NOW()
+        )
+    </insert>
+
+    <select id="selectById" parameterType="string" resultMap="RagKnowledgeResultMap">
+        SELECT * FROM rag_knowledge WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="RagKnowledgeResultMap">
+        SELECT * FROM rag_knowledge ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByCategory" parameterType="string" resultMap="RagKnowledgeResultMap">
+        SELECT * FROM rag_knowledge WHERE category = #{category} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByParentId" parameterType="string" resultMap="RagKnowledgeResultMap">
+        SELECT * FROM rag_knowledge WHERE parent_id = #{parentId} ORDER BY created_at DESC
+    </select>
+
+    <update id="update" parameterType="com.spring.airag.data.entity.RagKnowledgeEntity">
+        UPDATE rag_knowledge SET
+            parent_id = #{parentId},
+            title = #{title},
+            content = #{content},
+            category = #{category},
+            embedding_vector = #{embeddingVector},
+            metadata = #{metadata},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM rag_knowledge WHERE id = #{id}
+    </delete>
+
+</mapper>

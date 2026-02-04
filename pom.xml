@@ -133,6 +133,12 @@
                 <version>1.0.0-M2</version>
             </dependency>
 
+            <!-- Spring Cloud Bootstrap -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            </dependency>
+
             <!-- 工具库 -->
             <dependency>
                 <groupId>cn.hutool</groupId>

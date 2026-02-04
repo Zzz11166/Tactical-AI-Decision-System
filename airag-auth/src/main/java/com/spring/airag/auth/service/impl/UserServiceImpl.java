@@ -48,13 +48,8 @@ public class UserServiceImpl implements UserService {
     // 将认证信息存储到SecurityContext中，以便在后续请求中获取当前用户信息
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 获取用户信息 - 从数据库查询完整用户信息而不是使用Principal
-        String username = loginRequest.getUsername();
-        User user = userMapper.selectByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("用户不存在");
-        }
-
+        // 获取用户信息
+        User user = (User) authentication.getPrincipal();
 
         // 生成JWT令牌
         String roles = user.getRole();
